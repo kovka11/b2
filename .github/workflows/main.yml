@@ -13,12 +13,20 @@ jobs:
 
       - name: Build (alairas nelkul)
         run: |
+          PROJ=$(find . -maxdepth 4 -name "BazisChat.xcodeproj" | head -n 1)
+          if [ -z "$PROJ" ]; then
+            echo "Nem talalom a BazisChat.xcodeproj mappat. A repo tartalma:"
+            find . -maxdepth 3 -not -path "./.git/*" | head -n 60
+            exit 1
+          fi
+          echo "Projekt: $PROJ"
+          cd "$(dirname "$PROJ")"
           xcodebuild \
             -project BazisChat.xcodeproj \
             -target BazisChat \
             -configuration Release \
             -sdk iphoneos \
-            SYMROOT="$PWD/build" \
+            SYMROOT="$GITHUB_WORKSPACE/build" \
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGN_IDENTITY="" \
